@@ -1,0 +1,78 @@
+{
+  "accuracy": 0.4841,
+  "correct": 4841,
+  "total_samples": 10000,
+  "label_distribution": {
+    "unchanged": 2815,
+    "down": 5111,
+    "up": 2074
+  },
+  "confusion_matrix": {
+    "unchanged": {
+      "unchanged": 2070,
+      "down": 395,
+      "up": 350
+    },
+    "down": {
+      "unchanged": 2323,
+      "down": 2112,
+      "up": 676
+    },
+    "up": {
+      "down": 545,
+      "up": 659,
+      "unchanged": 870
+    }
+  },
+  "split_statistics": {
+    "chemical-id-id_test": {
+      "accuracy": 0.48802612481857766,
+      "correct": 1345,
+      "total": 2756
+    },
+    "chemical-id-ood_test": {
+      "accuracy": 0.42663656884875845,
+      "correct": 945,
+      "total": 2215
+    },
+    "chemical-ood_test-id_test": {
+      "accuracy": 0.5146048109965635,
+      "correct": 599,
+      "total": 1164
+    },
+    "chemical-ood_test-ood_test": {
+      "accuracy": 0.38977635782747605,
+      "correct": 488,
+      "total": 1252
+    },
+    "geneticRNv3-id-id_test": {
+      "accuracy": 0.5784597568037059,
+      "correct": 999,
+      "total": 1727
+    },
+    "geneticRNv3-id-ood_test": {
+      "accuracy": 0.5551181102362205,
+      "correct": 141,
+      "total": 254
+    },
+    "geneticRNv3-ood_test-id_test": {
+      "accuracy": 0.49898580121703856,
+      "correct": 246,
+      "total": 493
+    },
+    "geneticRNv3-ood_test-ood_test": {
+      "accuracy": 0.5611510791366906,
+      "correct": 78,
+      "total": 139
+    }
+  },
+  "n_shots": 0,
+  "elapsed_time": 4001.116395109,
+  "samples_per_second": 2.4993024477428567,
+  "max_workers": 1,
+  "model_name": "gpt-6-astra",
+  "temperature": 0.1,
+  "resumed_from_checkpoint": false,
+  "checkpoint_records_at_start": 0,
+  "elapsed_time_history_complete": true
+}
