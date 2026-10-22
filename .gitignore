@@ -1,0 +1,12 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+*.log
+*.partial
+*.runtime_seconds
+*.runtime_seconds.tmp
+*.run.json
+results/
+*.bak
+*.Zone.Identifier
