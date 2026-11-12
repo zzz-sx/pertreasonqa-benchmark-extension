@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Resumable runner; leaves the original Improved CoT script untouched."""
+"""Resumable runner for the bundled Improved CoT evaluator."""
 import argparse
 import collections
 import getpass
@@ -15,11 +15,6 @@ from pathlib import Path
 p = argparse.ArgumentParser(add_help=False)
 p.add_argument("--checkpoint_every", type=int, default=10)
 p.add_argument("--resume", action="store_true")
-p.add_argument(
-    "--repo_dir",
-    type=Path,
-    default=Path(__file__).resolve().parents[3] / "pertreason-s"
-)
 p.add_argument("--elapsed_before_resume", type=float, default=0)
 cp, args = p.parse_known_args()
 if cp.checkpoint_every < 1 or cp.elapsed_before_resume < 0:
@@ -44,20 +39,21 @@ if not cp.resume and partial.exists() and partial.stat().st_size:
 if not cp.resume and runtime.exists():
     raise SystemExit(f"Runtime file already exists: {runtime}")
 
-root = cp.repo_dir.expanduser().resolve()
-script = root / "benchmark_test/scripts/test_improved_cot.py"
+script = Path(__file__).resolve().with_name("test_improved_cot.py")
 expected_sha256 = "c74b73e971866134ff06d7872ba8eb19342b75ef5a326b08c883ec9b712b0eaf"
 actual_sha256 = hashlib.sha256(script.read_bytes()).hexdigest()
 
 if actual_sha256 != expected_sha256:
     raise SystemExit(
-        "Original benchmark script does not match the pinned upstream version."
+        "Bundled benchmark script checksum mismatch."
     )
 
 source = script.read_text(encoding="utf-8")
-print("PASS: Original benchmark script SHA256 verified.", flush=True)
+print("PASS: Bundled benchmark script SHA256 verified.", flush=True)
 
-key = getpass.getpass("Enter NEW API Key (input hidden): ").strip()
+key = os.environ.get("OPENAI_API_KEY", "").strip()
+if not key:
+    key = getpass.getpass("Enter API Key (input hidden): ").strip()
 if not key:
     raise SystemExit("Empty API key.")
 args.extend(["--api_key", key])
@@ -95,7 +91,7 @@ def read_partial():
             raw += b"\n"
         except (json.JSONDecodeError, UnicodeDecodeError):
             raw = raw[:last + 1] if last >= 0 else b""
-            partial.write_bytes(raw)
+        partial.write_bytes(raw)
     rows = []
     for n, line in enumerate(raw.splitlines(), 1):
         try:
@@ -205,6 +201,7 @@ def evaluate_resume(self, test_data, max_workers=1, checkpoint_path=None, checkp
         raise RuntimeError("Some samples have no result; checkpoint retained.")
     self.results = ordered
     stats = self.compute_statistics(ordered, elapsed, len(test_data))
+    stats["max_workers"] = max_workers
     stats["resumed_from_checkpoint"] = bool(cp.resume)
     stats["checkpoint_records_at_start"] = len(old_rows)
     stats["elapsed_time_history_complete"] = elapsed_known or not cp.resume
